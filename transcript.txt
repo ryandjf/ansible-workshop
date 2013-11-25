@@ -1,0 +1,75 @@
+
+
+Preparation:
+Apply AWS account
+Install Python 2.6 or later
+Install pip
+Setup SSH identity for github
+
+Instructions:
+Check whether everyone has AWS account, show the AWS management console.
+Show the security credential page, create a new access key, remember the secret access key.
+Check security group, and create a new security group.
+Configure the security group to allow SSH protocol.
+Create a new key pair and download the pem file.
+Launch a EC2 instance with specific security group and key pair. Add a tag (Name=Foo) to it for reference.
+SSH to the new created instance.
+
+Introduction to CloudFormation
+Show the CloudFormation templates, Drupal website template http://aws.amazon.com/cloudformation/aws-cloudformation-templates/
+Download the template file, make some changes to add default values.
+Create a CloudFormation by uploading the template file.
+Check the output for url and open it.
+Modify the template with different value
+Create another CloudFormation by uploading the updated template file.
+Check the output  for url and open it, show the difference.
+
+Introduction to Elastic Load Balancer
+Create a ELB and add the two Drupal instances.
+Using the default healthy check url, and show that the services are not healthy.
+Update the healthy check url, and show the services are back to normal.
+Check the ELB url and refresh it for several times and see different pages are served.
+
+Introduction to Ansible
+Install Ansible from github
+    sudo easy_install pip
+    sudo pip install paramiko PyYAML jinja2
+    git clone git@github.com:ansible/ansible.git
+    cd ./ansible
+    source ./hacking/env-setup
+    echo "127.0.0.1" > ~/ansible_hosts
+    enable Remote Login in Mac System Preference
+    cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+    ansible all -i ~/ansible_hosts -m ping —private-key=~/.ssh/id_rsa --ask-pass 
+
+Config AWS and Ansible
+export AWS_ACCESS_KEY_ID=“*"
+export AWS_SECRET_ACCESS_KEY=“*"
+export AWS_KEY_ID=“*"
+export EC2_ACCESS_KEY=${AWS_ACCESS_KEY_ID}
+export EC2_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
+#export EC2_REGION=us-east-1
+#export EC2_URL=https://ec2.amazonaws.com
+#export S3_URL=https://s3.amazonaws.com:443
+
+# Ansible Config
+export ANSIBLE_HOST_KEY_CHECKING=false
+
+Create a Ansible host file for EC2
+    [local]
+    localhost
+Ping EC2 instances with Ansible command
+    ansible -i ~/src/ansible/plugins/inventory/ec2.py --private-key=~/.ssh/ryandjf_gmail_us_east.pem -u ec2-user -m ping us-east-1
+Use tag host pattern to ping EC2 host again
+
+Create 2 new EC2 instances with Ansible (tag them)
+    ansible localhost -i ~/ansible_hosts -m ec2 -a "image=ami-83e4bcea instance_type=t1.micro region=us-east-1 keypair=ryandjf-gmail-us-east wait=yes instance_tags=‘{\”key1\”:\”value1\"}'" -c local
+    ansible localhost -i ~/ansible_hosts -m ec2 -a "image=ami-83e4bcea instance_type=t1.micro region=us-east-1 keypair=ryandjf-gmail-us-east wait=yes'" -c local
+Destroy those 2 EC2 instances
+    ansible localhost -i ~/ansible_hosts -m ec2 -a "state=absent region=us-east-1 keypair=ryandjf-gmail-us-east wait=yes instance_ids=i-954343ec,i-a94343d0" -c local
+
+Create a CloudFormation stack with Ansible
+    ansible-playbook -i ~/ansible_hosts --private-key=~/.ssh/ryandjf_gmail_us_east.pem Launch_EC2_Instance_With_Tags.yaml
+Add the new stack to the load balancer we created before.
+    ansible localhost -i ~/ansible_hosts -m ec2_elb -a "ec2_elbs=myelb instance_id=i-f902f583 region=us-east-1 state=present wait=yes" -c local
+
