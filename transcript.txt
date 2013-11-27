@@ -1,10 +1,14 @@
 
 
-Preparation:
+Setup:
+Check connection to aws.amazon.com is fine.
 Apply AWS account
 Install Python 2.6 or later
-Install pip
-Setup SSH identity for github
+Install pip (sudo easy_install pip)
+Setup SSH identity for GitHub
+
+Preparation:
+Create two Drupal CloudFormation stacks because it takes long time to start.
 
 Instructions:
 Check whether everyone has AWS account, show the AWS management console.
@@ -13,7 +17,8 @@ Check security group, and create a new security group.
 Configure the security group to allow SSH protocol.
 Create a new key pair and download the pem file.
 Launch a EC2 instance with specific security group and key pair. Add a tag (Name=Foo) to it for reference.
-SSH to the new created instance.
+SSH to the new created instance. (Select the instance and check the Connect button, it will show the steps to connect).
+
 
 Introduction to CloudFormation
 Show the CloudFormation templates, Drupal website template http://aws.amazon.com/cloudformation/aws-cloudformation-templates/

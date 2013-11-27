@@ -6,7 +6,7 @@
   "Parameters" : {
 
     "KeyName" : {
-      "Default": "ryandjf-gmail-us-east",
+      "Default": "aws-workshop",
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
       "Type" : "String"
     },
@@ -26,7 +26,7 @@
     },
 
     "SiteEMail": {
-      "Default": "ryandjf@hotmail.com",
+      "Default": "test@example.com",
       "Description" : "EMail for site administrator",
       "Type": "String"
     },
