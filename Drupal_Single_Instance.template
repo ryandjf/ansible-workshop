@@ -20,7 +20,7 @@
     },
 
     "SiteName": {
-      "Default": "My Second Site",
+      "Default": "My First Site",
       "Description" : "The name of the Drupal Site",
       "Type": "String"
     },

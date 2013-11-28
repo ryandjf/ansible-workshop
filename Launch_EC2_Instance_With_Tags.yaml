@@ -14,5 +14,5 @@
       wait: yes
       wait_timeout: 6000
       count: 2
-      instance_tags: '{"Name":"Foo", "Age":"Bar"}'
+      instance_tags: '{"Name":"Foo", "Gender":"Male"}'
       monitoring: yes

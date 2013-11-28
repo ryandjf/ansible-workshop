@@ -7,7 +7,7 @@
   tasks:
   - name: Launch a CloudFormation stack
     cloudformation: >
-      stack_name="ansible-cloudformation2"
+      stack_name="ForthDrupal"
       state=present
       region=us-east-1
       disable_rollback=true
