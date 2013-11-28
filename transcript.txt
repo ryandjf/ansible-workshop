@@ -1,11 +1,11 @@
-
+    
 
 Setup:
 Check connection to aws.amazon.com is fine.
 Apply AWS account
 Install Python 2.6 or later
 Install pip (sudo easy_install pip)
-Setup SSH identity for GitHub
+Setup SSH identity for GitHub (either ssh or https is fine)
 
 Preparation:
 Create two Drupal CloudFormation stacks because it takes long time to start.
@@ -27,7 +27,7 @@ Create a CloudFormation by uploading the template file.
 Check the output for url and open it.
 Modify the template with different value
 Create another CloudFormation by uploading the updated template file.
-Check the output  for url and open it, show the difference.
+Check the output for url and open it, show the difference.
 
 Introduction to Elastic Load Balancer
 Create a ELB and add the two Drupal instances.
@@ -43,7 +43,7 @@ Install Ansible from github
     cd ./ansible
     source ./hacking/env-setup
     echo "127.0.0.1" > ~/ansible_hosts
-    enable Remote Login in Mac System Preference
+    enable Remote Login in Mac System Preference -> Sharing
     cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
     ansible all -i ~/ansible_hosts -m ping —private-key=~/.ssh/id_rsa --ask-pass 
 
@@ -64,7 +64,7 @@ Create a Ansible host file for EC2
     [local]
     localhost
 Ping EC2 instances with Ansible command
-    ansible -i ~/src/ansible/plugins/inventory/ec2.py --private-key=~/.ssh/ryandjf_gmail_us_east.pem -u ec2-user -m ping us-east-1
+    ansible -i ~/src/ansible/plugins/inventory/ec2.py --private-key=~/.ssh/aws-workshop.pem -u ec2-user -m ping us-east-1
 Use tag host pattern to ping EC2 host again
 
 Create 2 new EC2 instances with Ansible (tag them)
@@ -74,7 +74,7 @@ Destroy those 2 EC2 instances
     ansible localhost -i ~/ansible_hosts -m ec2 -a "state=absent region=us-east-1 keypair=ryandjf-gmail-us-east wait=yes instance_ids=i-954343ec,i-a94343d0" -c local
 
 Create a CloudFormation stack with Ansible
-    ansible-playbook -i ~/ansible_hosts --private-key=~/.ssh/ryandjf_gmail_us_east.pem Launch_EC2_Instance_With_Tags.yaml
+    ansible-playbook -i ~/ansible_hosts --private-key=~/.ssh/aws-workshop.pem Launch_EC2_Instance_With_Tags.yaml
 Add the new stack to the load balancer we created before.
     ansible localhost -i ~/ansible_hosts -m ec2_elb -a "ec2_elbs=myelb instance_id=i-f902f583 region=us-east-1 state=present wait=yes" -c local
 

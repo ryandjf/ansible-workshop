@@ -7,7 +7,7 @@
   tasks:
   - local_action:
       module: ec2
-      keypair: ryandjf-gmail-us-east
+      keypair: aws-workshop
       instance_type: t1.micro
       image: ami-83e4bcea
       region: us-east-1

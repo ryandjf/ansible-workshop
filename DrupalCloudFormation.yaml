@@ -14,7 +14,7 @@
       template=Drupal_Single_Instance.template
     args:
       template_parameters:
-        KeyName: ryandjf-gmail-us-east
+        KeyName: aws-workshop
     register: stack
   - name: Show stack outputs
     debug: msg="My stack outputs are {{stack.stack_outputs}}"
