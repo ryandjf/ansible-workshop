@@ -39,19 +39,15 @@ Check the ELB url and refresh it for several times and see different pages are s
 Introduction to Ansible
 Install Ansible from github
     sudo easy_install pip
-    sudo pip install paramiko PyYAML jinja2
+    sudo pip install paramiko PyYAML jinja2 boto
     git clone git@github.com:ansible/ansible.git
     cd ./ansible
     source ./hacking/env-setup
-    echo "127.0.0.1" > ~/ansible_hosts
-    enable Remote Login in Mac System Preference -> Sharing
-    cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-    ansible all -i ~/ansible_hosts -m ping —private-key=~/.ssh/id_rsa --ask-pass 
 
-Config AWS and Ansible
-export AWS_ACCESS_KEY_ID=“*"
-export AWS_SECRET_ACCESS_KEY=“*"
-export AWS_KEY_ID=“*"
+#Config AWS Credentials
+export AWS_ACCESS_KEY_ID="*"
+export AWS_SECRET_ACCESS_KEY="*"
+export AWS_KEY_ID="*"
 export EC2_ACCESS_KEY=${AWS_ACCESS_KEY_ID}
 export EC2_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
 #export EC2_REGION=us-east-1
@@ -61,12 +57,9 @@ export EC2_SECRET_KEY=${AWS_SECRET_ACCESS_KEY}
 # Ansible Config
 export ANSIBLE_HOST_KEY_CHECKING=false
 
-Create a Ansible host file for EC2
+Create a Ansible host file for EC2 (~/ansible_hosts)
     [local]
     localhost
-Ping EC2 instances with Ansible command
-    ansible -i ~/src/ansible/plugins/inventory/ec2.py --private-key=~/.ssh/aws-workshop.pem -u ec2-user -m ping us-east-1
-
 
 Create 2 new EC2 instances with Ansible
     ansible localhost -i ~/ansible_hosts -m ec2 -a "image=ami-83e4bcea instance_type=t1.micro region=us-east-1 keypair=aws-workshop count=2 wait=yes" -c local

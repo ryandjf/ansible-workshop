@@ -7,7 +7,7 @@
   tasks:
   - name: Launch a CloudFormation stack
     cloudformation: >
-      stack_name="ForthDrupal"
+      stack_name="SecondDrupal"
       state=present
       region=us-east-1
       disable_rollback=true
@@ -15,6 +15,7 @@
     args:
       template_parameters:
         KeyName: aws-workshop
+        SiteName: "My Second Drupal Site"
     register: stack
   - name: Show stack outputs
     debug: msg="My stack outputs are {{stack.stack_outputs}}"
