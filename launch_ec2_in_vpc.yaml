@@ -1,0 +1,22 @@
+---
+- name: Launch EC2 instance in given VPC subnet with public IP assigned
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - local_action:
+      module: ec2
+      keypair: aws-workshop
+      group_id: sg-b69a62d3
+      instance_type: t1.micro
+      image: ami-83e4bcea
+      wait: yes
+      vpc_subnet_id: subnet-ff4018b9
+      assign_public_ip: yes
+      wait: yes
+      region: us-east-1
+    register: ec2_info
+
+  - debug: msg="Created EC2 instance {{item.public_dns_name}}"
+    with_items: ec2_info.instances

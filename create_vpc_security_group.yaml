@@ -1,0 +1,49 @@
+---
+- name: Create VPC security group with ssh http and https open
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - local_action:
+      module: ec2_group
+      name: vpc_service_sg
+      description: VPC security group with ssh http and https open
+      vpc_id: vpc-f2ac4997
+      region: us-east-1
+      rules:
+        - proto: tcp
+          from_port: 80
+          to_port: 80
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+    register: sg
+  - local_action:
+      module: ec2_group 
+      name: vpc_service_sg
+      description: VPC security group with ssh http and https open
+      vpc_id: vpc-f2ac4997
+      region: us-east-1
+      rules:
+        - proto: all
+          group_id: "{{sg.group_id}}"
+        - proto: tcp
+          from_port: 80
+          to_port: 80
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+  - debug: msg="Created VPC security group {{sg.group_id}}"

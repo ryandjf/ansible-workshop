@@ -1,0 +1,27 @@
+---
+- name: Create VPC with a Single Public Subnet Only
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - local_action:
+      module: ec2_vpc
+      state: present
+      cidr_block: 10.0.0.0/16
+      dns_hostnames: yes
+      dns_support: yes
+      subnets:
+        - cidr: 10.0.0.0/24
+      internet_gateway: yes
+      route_tables:
+        - subnets:
+          - 10.0.0.0/24
+          routes:
+            - dest: 0.0.0.0/0
+              gw: igw
+      region: us-east-1
+    register: vpc
+  - debug: var=vpc
+  - debug: msg="Created VPC subnet {{item.id}} for {{vpc.vpc_id}}"
+    with_items: vpc.subnets
