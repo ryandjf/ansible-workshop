@@ -1,0 +1,36 @@
+gradle init --type java-library
+
+1. Create ~/ansible_hosts file with following content
+
+
+ansible-playbook -i ~/ansible_hosts --private-key=~/.ssh/aws-workshop.pem setup.yaml
+
+ansible-playbook -i ~/src/ansible/plugins/inventory/ec2.py --private-key=~/.ssh/aws-workshop.pem destroy.yaml
+
+wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F" http://download.oracle.com/otn-pub/java/jdk/6u45-b06/jdk-7u51-linux-x64.bin
+
+http://download.oracle.com/otn-pub/java/jdk/7u51-b13/server-jre-7u51-linux-x64.tar.gz?AuthParam=1389936272_c2660657574b58e78b71eda6b9011262
+
+
+cd ~
+wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-x64.tar.gz"
+tar xvzf jre-7u51-linux-x64.tar.gz
+sudo mkdir /usr/local/java
+sudo mv ~/jre1.7.0_51 /usr/local/java
+sudo chmod -R a+x /usr/local/java/jre1.7.0_51
+sudo update-alternatives --install "/usr/bin/java" "java" "/usr/local/java/jre1.7.0_51/bin/java" 1
+
+
+sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/local/java/jre1.7.0_51/bin/javaws" 1
+sudo update-alternatives --set java /usr/local/java/jre1.7.0_51/bin/java
+sudo update-alternatives --set javaws /usr/local/java/jre1.7.0_51/bin/javaws
+
+http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-i586.tar.gz?AuthParam=1389953392_2fc4e6020c8de0e03ad8855a25ce37ed
+http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz?AuthParam=1389953387_1e10e702e9ef386e60a180b6bd8897e1
+http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-i586.tar.gz?AuthParam=1389953374_22ce3c6edda14ca165ef00b7bce380c8
+http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-x64.tar.gz?AuthParam=1389953368_3ec734d86fc8a19e0bd460f80521268f
+
+sudo apt-get update
+sudo debconf-set-selections <<<'mysql-server mysql-server/root_password password your_password'
+sudo debconf-set-selections <<<'mysql-server mysql-server/root_password_again password your_password' 
+sudo apt-get install -y mysql-server

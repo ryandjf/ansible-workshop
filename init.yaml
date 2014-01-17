@@ -1,0 +1,41 @@
+---
+- name: Destroy everything
+  hosts: "{{ec2_region_id}}"
+  gather_facts: true
+  user: ubuntu
+  vars:
+    ec2_region_id: us-east-1
+    ec2_key_pair_name: aws-workshop
+
+  tasks:
+  # fetch instance data from the metadata servers in ec2
+  - ec2_facts:
+
+  - debug: var=hostvars[inventory_hostname]
+
+  # - name: Terminate EC2 instance in VPC
+  #   local_action:
+  #     module: ec2
+  #     state: absent
+  #     instance_ids: "{{hostvars[inventory_hostname]['ansible_ec2_instance-id']}}"
+  #     keypair: "{{ec2_key_pair_name}}"
+  #     wait: yes
+  #     region: "{{ec2_region_id}}"
+
+  - debug: msg="Delete VPC SG {{hostvars[inventory_hostname]['ansible_ec2_security-groups']}}"
+
+  - name: Delete VPC security group
+    local_action:
+      module: ec2_group
+      name: "{{hostvars[inventory_hostname]['ansible_ec2_security-groups']}}"
+      description: Delete VPC security group
+      state: absent
+      region: "{{ec2_region_id}}"
+
+  # - name: Delete VPC
+  #   local_action:
+  #     module: ec2_vpc
+  #     state: absent
+  #     cidr_block: 10.0.0.0/16
+  #     wait: yes
+  #     region: "{{ec2_region_id}}"
