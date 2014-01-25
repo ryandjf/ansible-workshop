@@ -1,41 +1,58 @@
 ---
-- name: Destroy everything
+- name: Initialize env
   hosts: "{{ec2_region_id}}"
   gather_facts: true
   user: ubuntu
+  sudo: yes
   vars:
     ec2_region_id: us-east-1
     ec2_key_pair_name: aws-workshop
 
   tasks:
-  # fetch instance data from the metadata servers in ec2
   - ec2_facts:
 
-  - debug: var=hostvars[inventory_hostname]
+  # - debug: var=hostvars[inventory_hostname]
+  - name: Copy service jar file to remote
+    copy: src=/Users/twer/src/ansible-workshop/maple.jar dest=/tmp/maple.jar owner=root group=root mode=755 force=yes
 
-  # - name: Terminate EC2 instance in VPC
-  #   local_action:
-  #     module: ec2
-  #     state: absent
-  #     instance_ids: "{{hostvars[inventory_hostname]['ansible_ec2_instance-id']}}"
-  #     keypair: "{{ec2_key_pair_name}}"
-  #     wait: yes
-  #     region: "{{ec2_region_id}}"
+  - name: Copy service config file to remote
+    copy: src=/Users/twer/src/ansible-workshop/hello-world.yml dest=/tmp/hello-world.yml owner=root group=root mode=755 force=yes
 
-  - debug: msg="Delete VPC SG {{hostvars[inventory_hostname]['ansible_ec2_security-groups']}}"
+  - name: Copy service upstart file to remote
+    copy: src=/Users/twer/src/ansible-workshop/zero_interface.conf dest=/etc/init/zero_interface.conf owner=root group=root mode=755 force=yes
 
-  - name: Delete VPC security group
-    local_action:
-      module: ec2_group
-      name: "{{hostvars[inventory_hostname]['ansible_ec2_security-groups']}}"
-      description: Delete VPC security group
-      state: absent
-      region: "{{ec2_region_id}}"
+  - name: Download Oracle Java
+    command: 'wget --directory-prefix /tmp --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" --no-cookies "http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-x64.tar.gz"'
 
-  # - name: Delete VPC
-  #   local_action:
-  #     module: ec2_vpc
-  #     state: absent
-  #     cidr_block: 10.0.0.0/16
-  #     wait: yes
-  #     region: "{{ec2_region_id}}"
+  - name: Extract Java package
+    command: tar xvzf /tmp/jre-7u51-linux-x64.tar.gz --directory=/tmp
+
+  - name: Create /usr/local/java folder
+    command: mkdir /usr/local/java
+
+  - name: Move Java folder to /usr/local/java
+    command: mv /tmp/jre1.7.0_51 /usr/local/java
+
+  - name: Change folder mode of java folder
+    command: chmod -R a+x /usr/local/java/jre1.7.0_51
+
+  - name: Set default Java installation
+    command: update-alternatives --install "/usr/bin/java" "java" "/usr/local/java/jre1.7.0_51/bin/java" 1
+
+  - name: Update apt
+    command: apt-get update
+
+  - name: Copy MySQL seed file to remote
+    copy: src=/Users/twer/src/ansible-workshop/mysql.seed dest=/tmp/mysql.seed owner=root group=root mode=755 force=yes
+
+  - name: MySQL | Preseed MySQL file
+    command: /usr/bin/debconf-set-selections /tmp/mysql.seed
+
+  - name: MySQL | Install MySQL server
+    apt: pkg=mysql-server state=installed force=yes
+
+  - name: MySQL | Ensure MySQL daemon is running
+    service: name=mysql state=started
+
+  - name: Start Zero Interface service
+    service: name=zero_interface state=started

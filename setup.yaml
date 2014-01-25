@@ -61,12 +61,8 @@
         - proto: all
           group_id: "{{sg.group_id}}"
         - proto: tcp
-          from_port: 80
-          to_port: 80
-          cidr_ip: 0.0.0.0/0
-        - proto: tcp
-          from_port: 443
-          to_port: 443
+          from_port: 8080
+          to_port: 8080
           cidr_ip: 0.0.0.0/0
         - proto: tcp
           from_port: 22
@@ -82,6 +78,7 @@
       group_id: "{{sg.group_id}}"
       instance_type: "{{ec2_instance_type}}"
       image: "{{ec2_image_id}}"
+      instance_tags: '{"db":"mysql", "server":"service"}'
       wait: yes
       vpc_subnet_id: "{{vpc.subnets[0].id}}"
       assign_public_ip: yes

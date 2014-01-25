@@ -2,21 +2,25 @@ gradle init --type java-library
 
 1. Create ~/ansible_hosts file with following content
 
+ec2-107-23-6-94.compute-1.amazonaws.com
 
 ansible-playbook -i ~/ansible_hosts --private-key=~/.ssh/aws-workshop.pem setup.yaml
 
 ansible-playbook -i ~/src/ansible/plugins/inventory/ec2.py --private-key=~/.ssh/aws-workshop.pem destroy.yaml
+
+ansible-playbook -i ~/src/ansible/plugins/inventory/ec2.py --private-key=~/.ssh/xuehai-vpc-us-east.pem test.yml
+
+ansible-playbook -i ~/ansible_hosts --private-key=~/.ssh/xuehai-vpc-south-east.pem setup.yml --extra-vars "ec2_region_id=ap-southeast-1 ec2_image_id=ami-b84e04ea ec2_key_pair_name=xuehai-vpc-south-east"
 
 wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F" http://download.oracle.com/otn-pub/java/jdk/6u45-b06/jdk-7u51-linux-x64.bin
 
 http://download.oracle.com/otn-pub/java/jdk/7u51-b13/server-jre-7u51-linux-x64.tar.gz?AuthParam=1389936272_c2660657574b58e78b71eda6b9011262
 
 
-cd ~
-wget --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-x64.tar.gz"
-tar xvzf jre-7u51-linux-x64.tar.gz
+wget --directory-prefix /tmp --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" "http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-x64.tar.gz"
+tar xvzf /tmp/jre-7u51-linux-x64.tar.gz --directory=/tmp
 sudo mkdir /usr/local/java
-sudo mv ~/jre1.7.0_51 /usr/local/java
+sudo mv /tmp/jre1.7.0_51 /usr/local/java
 sudo chmod -R a+x /usr/local/java/jre1.7.0_51
 sudo update-alternatives --install "/usr/bin/java" "java" "/usr/local/java/jre1.7.0_51/bin/java" 1
 
@@ -30,7 +34,12 @@ http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz?A
 http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-i586.tar.gz?AuthParam=1389953374_22ce3c6edda14ca165ef00b7bce380c8
 http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jre-7u51-linux-x64.tar.gz?AuthParam=1389953368_3ec734d86fc8a19e0bd460f80521268f
 
+echo mysql-server-5.1 mysql-server/root_password password PASSWORD-STRING | sudo debconf-set-selections
+echo mysql-server-5.1 mysql-server/root_password_again password PASSWORD-STRING | sudo debconf-set-selections
+
+export DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server
+
 sudo apt-get update
-sudo debconf-set-selections <<<'mysql-server mysql-server/root_password password your_password'
-sudo debconf-set-selections <<<'mysql-server mysql-server/root_password_again password your_password' 
+sudo debconf-set-selections <<<'mysql-server mysql-server/root_password password 123456'
+sudo debconf-set-selections <<<'mysql-server mysql-server/root_password_again password 123456' 
 sudo apt-get install -y mysql-server
