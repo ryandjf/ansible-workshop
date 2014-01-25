@@ -1,0 +1,20 @@
+---
+- name: Create VPC with a Single Public Subnet Only
+  local_action:
+    module: ec2_vpc
+    state: present
+    cidr_block: 10.0.0.0/16
+    dns_hostnames: yes
+    dns_support: yes
+    wait: yes
+    subnets:
+      - cidr: 10.0.0.0/24
+    internet_gateway: yes
+    route_tables:
+      - subnets:
+        - 10.0.0.0/24
+        routes:
+          - dest: 0.0.0.0/0
+            gw: igw
+    region: "{{ ec2_region_id }}"
+  register: vpc

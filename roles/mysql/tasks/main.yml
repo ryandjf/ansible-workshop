@@ -1,0 +1,40 @@
+# Install server using a preseed file to set the root password
+# 1) Check is MySQL Server is already installed. If so, do not set preseed file
+- name: Check for previous installation
+  shell: "[ -f /usr/sbin/mysqld ]"
+  ignore_errors: True
+  register: mysqld_exists
+
+# 2) Preseed install options
+- name: Push preseed file for debconf
+  template:
+    src=mysql_seed.j2
+    dest=/tmp/mysql.seed
+  when: mysqld_exists|failed
+
+- name: Preseed mysql file
+  command: /usr/bin/debconf-set-selections /tmp/mysql.seed
+  when: mysqld_exists|failed
+
+# 3) Install
+- name: Update apt
+  command: apt-get update
+
+- name: Install server
+  apt: pkg=mysql-server state=installed force=yes
+  when: mysqld_exists|failed
+
+- name: Ensure MySQL daemon is running
+  service: name=mysql state=started
+
+- name: Config for easy access as user "{{ devuser }}"
+  template:
+    src=user_my.cnf.j2
+    dest=/home/{{ devuser }}/.my.cnf
+    owner={{ devuser }} mode=0600
+  when: devuser is defined
+
+# 4) Cleanup
+- name: Delete mysql.seed file
+  command: /bin/rm /tmp/mysql.seed
+  when: mysqld_exists|failed

@@ -1,0 +1,4 @@
+---
+- include: create_vpc_with_single_public_subnet.yml
+- include: create_vpc_security_group.yml
+- include: launch_ec2_in_vpc.yml

@@ -1,0 +1,18 @@
+---
+- name: Download Oracle Java 7 package
+  command: 'wget --directory-prefix /tmp --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" --no-cookies "http://download.oracle.com/otn-pub/java/jdk/{{ java_build_number }}/{{ java_package }}"'
+
+- name: Extract Oracle Java 7 package
+  command: tar xvzf /tmp/{{ java_package }} --directory=/tmp
+
+- name: Create /usr/local/java folder for Java installation
+  command: mkdir /usr/local/java
+
+- name: Move Oracle Java 7 folder to /usr/local/java
+  command: mv /tmp/{{ java_version }} /usr/local/java
+
+- name: Change folder mode of java installation folder
+  command: chmod -R a+x /usr/local/java/{{ java_version }}
+
+- name: Set default Java installation
+  command: update-alternatives --install "/usr/bin/java" "java" "/usr/local/java/{{ java_version }}/bin/java" 1

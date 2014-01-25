@@ -1,0 +1,36 @@
+---
+# Now we have to run ec2_group module twice to create security group first and get security group id,
+# and then we can add 'all' proto to that security group.
+# There will be a fix in Ansible soon to avoid this.
+- name: Create VPC security group with ssh proto open to get group id first
+  local_action:
+    module: ec2_group
+    name: "{{ ec2_vpc_sg_name }}"
+    description: VPC security group
+    vpc_id: "{{ vpc.vpc_id }}"
+    region: "{{ ec2_region_id }}"
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+  register: sg
+- name: Update VPC security group with ssh http open
+  local_action:
+    module: ec2_group
+    name: "{{ ec2_vpc_sg_name }}"
+    description: VPC security group with ssh http open
+    vpc_id: "{{ vpc.vpc_id }}"
+    region: "{{ ec2_region_id }}"
+    rules:
+      - proto: all
+        group_id: "{{ sg.group_id }}"
+      - proto: tcp
+        from_port: 8080
+        to_port: 8080
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+  register: sg
