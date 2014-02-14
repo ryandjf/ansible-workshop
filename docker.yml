@@ -1,0 +1,24 @@
+===
+- name: Setup Docker env
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    docker_repo_dir: ~/src/docker
+    docker_repo_url: https://github.com/dotcloud/docker.git
+
+  tasks:
+  - name: Remove Docker repo
+    command: rm -rf "{{ docker_repo_dir }}"
+
+  - name: Check out Docker repo
+    command: git clone {{ docker_repo_url }} {{ docker_repo_dir }}
+
+  - name: Go to Docker repo folder
+    command: cd {{ docker_repo_dir }}
+
+  - name: Run vagrant from the sources directory
+    command: vagrant up
+
+  - name: Connect you to the Docker VM
+    command: vagrant ssh
