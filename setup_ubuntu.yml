@@ -1,0 +1,10 @@
+---
+- name: Setup Ubuntu Dev Env
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  user: ryandjf
+  sudo: yes
+
+  roles:
+    - mysql
