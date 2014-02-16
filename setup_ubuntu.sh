@@ -22,6 +22,7 @@ echo 'export IDEA_HOME="~/Tools/idea"' >> ~/.bashrc
 echo 'export PATH="$IDEA_HOME/bin:$PATH"' >> ~/.bashrc
 
 git clone git@github.com:ryandjf/ansible-workshop.git ~/Src/ansible-workshop
+
 git clone git@github.com:ansible/ansible.git ~/Src/ansible
 sudo apt-get install -y python-setuptools
 sudo apt-get install -y python-pip
